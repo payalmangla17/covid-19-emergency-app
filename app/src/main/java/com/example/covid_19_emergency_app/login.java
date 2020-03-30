@@ -33,7 +33,7 @@ public class login extends AppCompatActivity {
     private Spinner spinner1;
     Button loggin_button;
     private static final String TAG = "loginn";
-    TextView oppen_signup,resend_otp;
+    TextView oppen_signup, resend_otp;
     FirebaseAuth firebaseAuth;
     String verify_Id;
     PhoneAuthProvider.ForceResendingToken force_token;
@@ -50,16 +50,17 @@ public class login extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
+            finish();
             Intent i = new Intent(login.this, MainActivity.class);
             i.putExtra("choice", 3);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            Toast.makeText(this, "Welcome Back !!", Toast.LENGTH_LONG).show();
+
             startActivity(i);
 
         } else {
             // User is signed out
             Log.d(TAG, "onAuthStateChanged:signed_out");
-            Toast.makeText(this, "signed_out", Toast.LENGTH_SHORT).show();
+
         }
 
         final Intent i = new Intent(this, SignUp.class);
@@ -198,6 +199,7 @@ public class login extends AppCompatActivity {
                             Intent inten = new Intent(login.this, MainActivity.class);
                             inten.putExtra("mmobile", numberToLogin.getText().toString());
                             inten.putExtra("choice", variable);
+                            finish();
                             startActivity(inten);
 
                         } else {
@@ -211,16 +213,18 @@ public class login extends AppCompatActivity {
                     }
                 });
     }
+
     String mob_no;
+
     private void registerMobile() {
-         mob_no = "+91" + numberToLogin.getText().toString().trim();
+        mob_no = "+91" + numberToLogin.getText().toString().trim();
 
         if (mob_no.length() != 13) {
             Toast.makeText(this, "Enter a valid 10 digit number", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Toast.makeText(this, "Please wait !!", Toast.LENGTH_SHORT).show();
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 mob_no,        // Phone number to verify
                 60,                 // Timeout duration

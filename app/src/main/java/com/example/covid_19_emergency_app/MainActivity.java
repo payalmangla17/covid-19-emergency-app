@@ -1,16 +1,14 @@
 package com.example.covid_19_emergency_app;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -19,11 +17,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity
-{
-        Button signout_btn;
+public class MainActivity extends AppCompatActivity {
+    Button signout_btn;
 
     DatabaseReference reff;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,17 +38,13 @@ public class MainActivity extends AppCompatActivity
                 FirebaseAuth.getInstance().signOut();
 
                 finish();
+                Intent intent = new Intent(MainActivity.this, login.class);
 
-                if(var==3)
-                {
-                    Intent intent = new Intent(MainActivity.this,login.class);
-                    startActivity(intent);
-                }
-
-                }
+                startActivity(intent);
+            }
         });
-        Log.e("TAG", "betA");
 
+        Log.e("TAG", "betA");
 
 
         if (var != 3) {
@@ -66,7 +60,7 @@ public class MainActivity extends AppCompatActivity
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         Toast.makeText(MainActivity.this, "Welcome !!", Toast.LENGTH_SHORT).show();
-                        Log.e("bro","code");
+                        Log.e("bro", "code");
                         //      String temp_name = dataSnapshot.child("full_name").getValue().toString();
                         //     String temp_college = dataSnapshot.child("college").getValue().toString();
                         //    String temp_email = dataSnapshot.child("email").getValue().toString();
@@ -76,11 +70,12 @@ public class MainActivity extends AppCompatActivity
                         //  show_college.setText(temp_college);
                         //  show_email.setText(temp_email);
                         //  show_mobile.setText(temp_mobile);
-                    }
-                    else {
-                        Log.e("bro","dude");
-                                finish();
+                    } else {
+                        Log.e("bro", "dude");
+                        finish();
                         Toast.makeText(MainActivity.this, "You should first sign up and then come", Toast.LENGTH_LONG).show();
+                        FirebaseAuth.getInstance().signOut();
+
                         Intent goto_signup = new Intent(MainActivity.this, SignUp.class);
                         startActivity(goto_signup);
                     }
@@ -88,7 +83,7 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(MainActivity.this, "Sorry try again", Toast.LENGTH_SHORT).show();
+
                 }
 
             });

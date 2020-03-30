@@ -1,9 +1,5 @@
 package com.example.covid_19_emergency_app;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +12,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.covid_19_emergency_app.model.helper_user;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,22 +34,22 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.TimeUnit;
 
-public class SignUp extends AppCompatActivity  {
-    FirebaseAuth fauth;
-    TextView loggin_page, goto_nomo, category_opener,resend_otp;
-    Button signup_click;
+public class SignUp extends AppCompatActivity {
     private static final String TAG = "siggnup";
-    TextInputEditText t_name, t_age,t_mobile;
+    FirebaseAuth fauth;
+    TextView loggin_page, goto_nomo, category_opener, resend_otp;
+    Button signup_click;
+    TextInputEditText t_name, t_age, t_mobile;
     String mobile;
     Spinner spinner;
-
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-
     FirebaseDatabase mDatabase;
     DatabaseReference signupRef;
     String verify_Id;
     PhoneAuthProvider.ForceResendingToken force_token;
+    int variable = 1;
+    EditText otp_text;
+    String mob_no;
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,15 +99,10 @@ public class SignUp extends AppCompatActivity  {
 
         signup_click.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if(variable==1)
-                {
+            public void onClick(View v) {
+                if (variable == 1) {
                     signupRef = mDatabase.getReference("Nomodular");
-                }
-
-                else
-                {
+                } else {
                     signupRef = mDatabase.getReference("Aid_Helper");
                 }
                 registerMobile();
@@ -149,29 +144,7 @@ public class SignUp extends AppCompatActivity  {
         };
 
     }
-    int variable = 1;
-    public class CustomOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
-        String firstItem = String.valueOf(spinner.getSelectedItem());
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            if (firstItem.equals(String.valueOf(spinner.getSelectedItem())))
-            {
-                // ToDo when first item is selected
-                variable=1;
-            }
-            else
-            {
-                variable=2;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> arg) {
-
-        }
-
-    }
     private void resendVerificationCode(String phoneNumber,
                                         PhoneAuthProvider.ForceResendingToken token) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
@@ -182,17 +155,12 @@ public class SignUp extends AppCompatActivity  {
                 mCallbacks,         // OnVerificationStateChangedCallbacks
                 token);             // ForceResendingToken from callbacks
     }
-
+            String name,age;
     private void saveDataInFirebase(String uid) {
-        String name = t_name.getText().toString().trim();
-        String age = t_age.getText().toString().trim();
+         name = t_name.getText().toString().trim();
+        age = t_age.getText().toString().trim();
 
         mobile = t_mobile.getText().toString().trim();
-
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(mobile) || TextUtils.isEmpty(age)) {
-            Toast.makeText(SignUp.this, "empty fields required", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         helper_user user = new helper_user(name, mobile, age);
 
@@ -203,8 +171,6 @@ public class SignUp extends AppCompatActivity  {
 
     }
 
-    EditText otp_text;
-
     private void otpDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(SignUp.this);
 
@@ -213,7 +179,7 @@ public class SignUp extends AppCompatActivity  {
         resend_otp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resendVerificationCode(mob_no,force_token);
+                resendVerificationCode(mob_no, force_token);
             }
         });
 
@@ -249,23 +215,23 @@ public class SignUp extends AppCompatActivity  {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-                            Toast.makeText(SignUp.this, "success", Toast.LENGTH_SHORT).show();
 
                             FirebaseUser user = task.getResult().getUser();
 
                             saveDataInFirebase(user.getUid());
 
                             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                                Toast.makeText(SignUp.this, "logged in", Toast.LENGTH_SHORT).show();
-                            }
 
+
+                            }
+                            finish();
                             Intent inten = new Intent(SignUp.this, MainActivity.class);
                             inten.putExtra("mmobile", t_mobile.getText().toString().trim());
-                            inten.putExtra("choice",variable);
+                            inten.putExtra("choice", variable);
                             startActivity(inten);
                             // ...
                         } else {
-                            Toast.makeText(SignUp.this, "failed", Toast.LENGTH_SHORT).show();
+
 
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -276,11 +242,18 @@ public class SignUp extends AppCompatActivity  {
                 });
     }
 
-    String mob_no;
-
     private void registerMobile() {
-        mob_no = "+91" + t_mobile.getText();
+        mob_no = "+91" + t_mobile.getText().toString();
+        name = t_name.getText().toString();
+        age = t_age.getText().toString();
+
         Log.e("registerMobile", "mob_no length  :" + mob_no.length() + " mob no: " + mob_no);
+
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(age)) {
+            Toast.makeText(SignUp.this, "empty fields required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (mob_no.length() != 13) {
             Toast.makeText(this, "Enter a valid 10 digit number", Toast.LENGTH_SHORT).show();
             return;
@@ -293,6 +266,26 @@ public class SignUp extends AppCompatActivity  {
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
+    }
+
+    public class CustomOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        String firstItem = String.valueOf(spinner.getSelectedItem());
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (firstItem.equals(String.valueOf(spinner.getSelectedItem()))) {
+                // ToDo when first item is selected
+                variable = 1;
+            } else {
+                variable = 2;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg) {
+
+        }
+
     }
 }
 

@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/colorPrimary" />
-    <corners android:bottomRightRadius="24dp"
-        android:bottomLeftRadius="24dp"
-        android:topRightRadius="24dp"
-        android:topLeftRadius="24dp"/>
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_focused="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/circlle_pressed" >
+    </item>
+
+    <item
+        android:state_focused="false"
+        android:state_pressed="true"
+        android:drawable="@drawable/circlle_pressed" >
+
+    </item>
+
+    <item android:drawable="@drawable/circlle" >
+
+    </item>
+
+</selector>
