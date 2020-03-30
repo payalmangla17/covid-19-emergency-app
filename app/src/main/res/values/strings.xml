@@ -28,7 +28,7 @@
     <string name="open">open</string>
     <string name="well">Welcome</string>
 
-
+    <string name="contacts">Emergency Dials</string>
     <string-array name="two_paths">
         <item>Nomodular</item>
         <item>Aid Helper</item>
