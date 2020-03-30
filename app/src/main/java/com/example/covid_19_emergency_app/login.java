@@ -78,6 +78,7 @@ public class login extends AppCompatActivity {
         oppen_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
                 startActivity(i);
             }
         });
@@ -203,7 +204,7 @@ public class login extends AppCompatActivity {
                             startActivity(inten);
 
                         } else {
-                            Toast.makeText(login.this, "failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(login.this, "Wrong otp !!", Toast.LENGTH_SHORT).show();
 
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
