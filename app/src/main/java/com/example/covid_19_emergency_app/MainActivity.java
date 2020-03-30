@@ -3,6 +3,7 @@ package com.example.covid_19_emergency_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
     Button signout_btn;
-
+    BottomNavigationView navView;
     DatabaseReference reff;
 
     @Override
@@ -29,7 +31,30 @@ public class MainActivity extends AppCompatActivity {
         final int var = getIntent().getIntExtra("choice", 1);
 
         final String mmobile = getIntent().getStringExtra("mmobile");
-
+        navView=findViewById(R.id.bottom_navigation);
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.about:
+                        Toast.makeText(MainActivity.this, "about", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.Emergency_contacts:
+                        Toast.makeText(MainActivity.this, "Emergency contacts", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.help:
+                        Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.Corona:
+                        Toast.makeText(MainActivity.this, "updates", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.Notifications:
+                        Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
         signout_btn = findViewById(R.id.signOut_btn);
         signout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
