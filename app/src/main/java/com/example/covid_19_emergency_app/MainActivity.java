@@ -3,6 +3,8 @@ package com.example.covid_19_emergency_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView navView;
     DatabaseReference reff;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,32 +36,42 @@ public class MainActivity extends AppCompatActivity {
         final int var = getIntent().getIntExtra("choice", 1);
 
         final String mmobile = getIntent().getStringExtra("mmobile");
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame,new About()).commit();
+
         navView=findViewById(R.id.bottom_navigation);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment selectedFragment = null;
                 switch (item.getItemId()) {
                     case R.id.about:
-                        Toast.makeText(MainActivity.this, "about", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(MainActivity.this, "about", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new About();
                         break;
                     case R.id.Emergency_contacts:
-                        Toast.makeText(MainActivity.this, "Emergency contacts", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(MainActivity.this, "Emergency contacts", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new EmergencyDials();
                         break;
                     case R.id.help:
-                        Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new HelpDesk();
                         break;
                     case R.id.Corona:
-                        Toast.makeText(MainActivity.this, "updates", Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(MainActivity.this, "updates", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new CoronaUpdates();
                         break;
                     case R.id.Notifications:
-                        Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new Notifications();
                         break;
                 }
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame,selectedFragment).commit();
                 return true;
             }
         });
         signout_btn = findViewById(R.id.signOut_btn);
-        signout_btn.setOnClickListener(new View.OnClickListener() {
+     /*   signout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Signing out", Toast.LENGTH_SHORT).show();
@@ -67,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivity(intent);
             }
-        });
+        });*/
 
         Log.e("TAG", "betA");
 
@@ -115,5 +130,31 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.logout,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        if(item.getItemId() == R.id.signOut_btn)
+        {
+            Toast.makeText(MainActivity.this, "Signing out", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+
+            finish();
+            Intent intent = new Intent(MainActivity.this, login.class);
+
+            startActivity(intent);
+            return true;
+        }
+        else
+            return false;
+
     }
 }
