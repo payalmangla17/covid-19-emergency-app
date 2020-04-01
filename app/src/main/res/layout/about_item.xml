@@ -16,7 +16,7 @@
 
 
         <ImageView
-            android:id="@+id/imagepost"
+            android:id="@+id/image_post"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:adjustViewBounds="true"
@@ -24,7 +24,7 @@
             android:src="@drawable/circlle"/>
 
         <TextView
-            android:id="@+id/titlepost"
+            android:id="@+id/title_post"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -34,7 +34,7 @@
             android:text="Heading" />
 
         <TextView
-            android:id="@+id/desppost"
+            android:id="@+id/des_post"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
