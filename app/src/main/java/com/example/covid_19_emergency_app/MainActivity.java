@@ -1,6 +1,7 @@
 package com.example.covid_19_emergency_app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
     Button signout_btn;
     BottomNavigationView navView;
-    DatabaseReference reff;
+   static DatabaseReference reff;
 
 
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final int var = getIntent().getIntExtra("choice", 1);
 
-        final String mmobile = getIntent().getStringExtra("mmobile");
+         final String mmobile = getIntent().getStringExtra("mmobile");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame,new About()).commit();
 
@@ -101,6 +102,13 @@ public class MainActivity extends AppCompatActivity {
                     if (dataSnapshot.exists()) {
                         Toast.makeText(MainActivity.this, "Welcome !!", Toast.LENGTH_SHORT).show();
                         Log.e("bro", "code");
+
+
+                        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                        editor.putString("mobile_num", mmobile);
+                        editor.putInt("choice", var);
+                        editor.apply();
+
                         //      String temp_name = dataSnapshot.child("full_name").getValue().toString();
                         //     String temp_college = dataSnapshot.child("college").getValue().toString();
                         //    String temp_email = dataSnapshot.child("email").getValue().toString();
@@ -110,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
                         //  show_college.setText(temp_college);
                         //  show_email.setText(temp_email);
                         //  show_mobile.setText(temp_mobile);
-                    } else {
+                    }
+                    else {
                         Log.e("bro", "dude");
                         finish();
                         Toast.makeText(MainActivity.this, "You should first sign up and then come", Toast.LENGTH_LONG).show();
@@ -128,9 +137,27 @@ public class MainActivity extends AppCompatActivity {
 
             });
 
+        }
+        else
+        {
+            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+            mobile_num = prefs.getString("mobile_num", null);
+            variable = prefs.getInt("choice", -1);
 
+            if (variable != -1 && mobile_num !=null )
+            {
+                if(variable==2)
+                reff = FirebaseDatabase.getInstance().getReference().child("Aid_Helper").child(mobile_num);
+
+                else
+                reff = FirebaseDatabase.getInstance().getReference().child("Nomodular").child(mobile_num);
+
+
+            }
         }
     }
+    String mobile_num;
+    int variable;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
