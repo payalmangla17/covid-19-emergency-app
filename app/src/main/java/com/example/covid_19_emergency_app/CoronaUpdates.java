@@ -19,7 +19,8 @@ public class CoronaUpdates extends Fragment {
 
     String url = "https://www.mohfw.gov.in/";
 
-    public CoronaUpdates() {
+    public CoronaUpdates()
+    {
 
     }
 
@@ -51,11 +52,6 @@ public class CoronaUpdates extends Fragment {
                 progressBarSpin.setVisibility(View.GONE);
             }
         });
-
-
-
-
-
 
         return v;
     }

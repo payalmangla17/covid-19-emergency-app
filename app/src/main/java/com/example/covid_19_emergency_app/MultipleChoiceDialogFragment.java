@@ -21,16 +21,20 @@ public class MultipleChoiceDialogFragment extends DialogFragment {
         void onNegativeButtonClicked();
     }
 
+    public MultipleChoiceDialogFragment(onMultiChoiceListener mListener) {
+        this.mListener = mListener;
+    }
+
     onMultiChoiceListener mListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
+        /*try {
             mListener = (onMultiChoiceListener) context;
         } catch (Exception e) {
-            throw new ClassCastException(getActivity().toString() + " onMultiChoiceListener must implemented");
-        }
+          //  throw new ClassCastException(getActivity().toString() + " onMultiChoiceListener must implemented");
+        }*/
     }
 
     @NonNull

@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.example.covid_19_emergency_app.MainActivity.reff;
+
 
 public class Notifications extends Fragment {
 
@@ -21,5 +23,5 @@ public class Notifications extends Fragment {
                              Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_notifications, container, false);
-    }
+        }
 }
