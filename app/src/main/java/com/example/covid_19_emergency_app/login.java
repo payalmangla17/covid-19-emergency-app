@@ -75,6 +75,7 @@ public class login extends AppCompatActivity {
             }
         });
         numberToLogin = findViewById(R.id.num_text);
+
         oppen_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

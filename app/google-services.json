@@ -15,11 +15,64 @@
       },
       "oauth_client": [
         {
+          "client_id": "644972354990-fi7uvkubave0l6pdffgdq1jlnf54vfir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.covid_19_emergency_app",
+            "certificate_hash": "543fb2862681b1547a15138dae5c03888eda2b8a"
+          }
+        },
+        {
+          "client_id": "644972354990-ljv1loakqehr20iqi62ttaacjuk8gtjd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.covid_19_emergency_app",
+            "certificate_hash": "3ddc70a0f6338d349f1967132749c59b5eeac603"
+          }
+        },
+        {
           "client_id": "644972354990-u01r1flpa11ng0o3vbsc4qv323qm5sf6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.covid_19_emergency_app",
             "certificate_hash": "6c2997881696bc8acd1c15da481707368693a8d4"
+          }
+        },
+        {
+          "client_id": "644972354990-leqpb2i60c7051drtkaua8rftg2qjpnn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW1BPb6DpliTWpQwEt4QNtNw6CCmocqkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644972354990-leqpb2i60c7051drtkaua8rftg2qjpnn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644972354990:android:41b6f873117c9d43edfc3f",
+        "android_client_info": {
+          "package_name": "com.rohit.codv19admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644972354990-1ikhepl4rghqpmr1rut08e7afrbkccp2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rohit.codv19admin",
+            "certificate_hash": "d95b1c543368057eb5e7eeb62115e050ed1af9e6"
           }
         },
         {
