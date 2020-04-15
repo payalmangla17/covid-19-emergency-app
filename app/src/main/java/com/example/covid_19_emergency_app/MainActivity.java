@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.help:
                       //  Toast.makeText(MainActivity.this, "help", Toast.LENGTH_SHORT).show();
-                        selectedFragment = new HelpDesk();
+                   //     startActivity(new Intent(MainActivity.this,AutocompleteFragment.class));
+                          selectedFragment=new HelpDesk();
                         break;
                     case R.id.Corona:
                       //  Toast.makeText(MainActivity.this, "updates", Toast.LENGTH_SHORT).show();
