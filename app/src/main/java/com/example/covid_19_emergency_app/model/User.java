@@ -2,11 +2,13 @@ package com.example.covid_19_emergency_app.model;
 
 public class User
 {
-    public String categories,address;
+    public String categories,address,add_lat,add_long;
 
-    public User(String categories, String address) {
+    public User(String categories, String address,String add_lat,String add_long) {
         this.categories = categories;
         this.address = address;
+        this.add_lat=add_lat;
+        this.add_long=add_long;
 
 
     }
