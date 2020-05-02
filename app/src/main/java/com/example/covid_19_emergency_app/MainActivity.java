@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("TAG", "betA");
 
 
-        if (var != 3) {
+       if (var != 3) {
             if (var == 2) {
                 reff = FirebaseDatabase.getInstance().getReference().child("Aid_Helper").child(mmobile);
             } else {
@@ -159,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
     String mobile_num;
     int variable;
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.logout,menu);
         return super.onCreateOptionsMenu(menu);

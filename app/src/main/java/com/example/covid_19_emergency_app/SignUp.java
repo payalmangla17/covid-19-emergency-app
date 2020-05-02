@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.covid_19_emergency_app.model.helper_user;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
@@ -29,23 +30,29 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
 
 public class SignUp extends AppCompatActivity {
     private static final String TAG = "siggnup";
-    FirebaseAuth fauth;
-    TextView loggin_page, goto_nomo, category_opener, resend_otp;
-    Button signup_click;
-    TextInputEditText t_name, t_age, t_mobile;
+    private FirebaseAuth mAuth;
+    TextView loginpage, resend_otp;
+    Button signup;
+    TextInputEditText t_name, t_age, phoneno;
     String mobile;
+    String name,age;
     Spinner spinner;
     FirebaseDatabase mDatabase;
-    DatabaseReference signupRef;
-    String verify_Id;
-    PhoneAuthProvider.ForceResendingToken force_token;
+
+    private boolean mVerificationInProgress = false;
+    DatabaseReference ref;
+    private String mVerificationId;
+    PhoneAuthProvider.ForceResendingToken mResendToken;
     int variable = 1;
     EditText otp_text;
     String mob_no;
@@ -61,24 +68,21 @@ public class SignUp extends AppCompatActivity {
         spinner = findViewById(R.id.spinner2);
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
 
-        loggin_page = findViewById(R.id.open_login);
-
-        loggin_page.setOnClickListener(new View.OnClickListener() {
+        loginpage=findViewById(R.id.signin);
+        loginpage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignUp.this,login.class);
-
                 finish();
-                startActivity(intent);
+                startActivity(new Intent(SignUp.this,login.class));
             }
         });
 
         t_name = findViewById(R.id.help_name);
         t_age = findViewById(R.id.help_age);
-        t_mobile = findViewById(R.id.helper_number);
+        phoneno = findViewById(R.id.Phone1 );
 
-        signup_click = findViewById(R.id.btn_signUp);
-        fauth = FirebaseAuth.getInstance();
+        signup = findViewById(R.id.btn_signUp);
+        mAuth = FirebaseAuth.getInstance();
 
        /* signupRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -99,19 +103,25 @@ public class SignUp extends AppCompatActivity {
         });
 */
 
-
-        signup_click.setOnClickListener(new View.OnClickListener() {
+        signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (variable == 1) {
-                    signupRef = mDatabase.getReference("Nomodular");
+                    ref = mDatabase.getReference("Nomodular");
                 } else {
-                    signupRef = mDatabase.getReference("Aid_Helper");
+                    ref = mDatabase.getReference("Aid_Helper");
                 }
-                registerMobile();
+
+                if (!validatePhoneNumber()) {
+                    return;
+                }
+                //  startPhoneNumberVerification(phoneno.getText().toString());
+                readData(phoneno.getText().toString(),variable);
+
+              //  registerMobile();
             }
         });
-        fauth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
@@ -123,14 +133,27 @@ public class SignUp extends AppCompatActivity {
 
             @Override
             public void onVerificationCompleted(PhoneAuthCredential credential) {
+
                 Log.d(TAG, "onVerificationCompleted:" + credential);
+                // [START_EXCLUDE silent]
+                mVerificationInProgress = false;
+                signInWithPhoneAuthCredential(credential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
+                Log.w(TAG, "onVerificationFailed", e);
+                mVerificationInProgress = false;
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    phoneno.setError("Invalid Credentials.");
+                    // [END_EXCLUDE]
                 } else if (e instanceof FirebaseTooManyRequestsException) {
+
+                    Snackbar.make(findViewById(android.R.id.content), "Quota exceeded.",
+                            Snackbar.LENGTH_SHORT).show();
+
                 }
+
 
             }
 
@@ -139,12 +162,95 @@ public class SignUp extends AppCompatActivity {
                                    @NonNull PhoneAuthProvider.ForceResendingToken token) {
 
                 Log.d(TAG, "onCodeSent:" + verificationId);
-                verify_Id = verificationId;
-                force_token = token;
-                Log.e("onCodeSent", "onCodeSent");
+
+                // Save verification ID and resending token so we can use them later
+                mVerificationId = verificationId;
+                mResendToken = token;
                 otpDialog();
+
+
             }
         };
+
+    }
+    public  void readData(String phoneNum,int var){
+        // final String[] phoneNum = new String[1];
+        final int[] f =new int[1];
+        //String uid=phoneNum.getUid();
+        if(var==1) {
+        ref=mDatabase.getReference("Nomodular");
+
+            ref.orderByChild("mobile_no").equalTo(phoneNum).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null) {
+                        //f[0] =1;
+                        startPhoneNumberVerification(phoneno.getText().toString());
+
+                    } else
+                        Toast.makeText(SignUp.this, "User already exist.\nPlease register with different phone number.", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else{
+            ref=mDatabase.getReference("Aid Helper");
+            ref.orderByChild("mobile_no").equalTo(phoneNum).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null) {
+                        //f[0] =1;
+                        startPhoneNumberVerification(phoneno.getText().toString());
+
+                    } else
+                        Toast.makeText(SignUp.this, "User already exist.\nPlease register with different phone number.", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+        //  if(f[0]==0) return true;
+        //return false;
+    }
+
+    String s;
+    private void startPhoneNumberVerification(String phoneNumber) {
+        name = t_name.getText().toString();
+        age = t_age.getText().toString();
+        s="+91"+phoneNumber;
+        Log.e("registerMobile", "mob_no length  :" +s.length() + " mob no: " + s);
+
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(age)) {
+            Toast.makeText(SignUp.this, "empty fields required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(s.length()!=13){
+            Toast.makeText(SignUp.this,"Invalid Phone Number!\n Enter valid 10 digit Phone number." ,Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                s,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallbacks
+        // [END start_phone_auth]
+        //otpDialog();
+        mVerificationInProgress = true;
+
 
     }
 
@@ -156,21 +262,25 @@ public class SignUp extends AppCompatActivity {
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks,         // OnVerificationStateChangedCallbacks
-                token);             // ForceResendingToken from callbacks
+                token);
+
+        // ForceResendingToken from callbacks
     }
-            String name,age;
+
     private void saveDataInFirebase(String uid) {
+       // ref=mDatabase.getReference("Users");
+
          name = t_name.getText().toString().trim();
         age = t_age.getText().toString().trim();
 
-        mobile = t_mobile.getText().toString().trim();
+        mobile = phoneno.getText().toString().trim();
 
         helper_user user = new helper_user(name, mobile, age);
 
 
         Log.e("uid : ", "" + uid);
-        uid = t_mobile.getText().toString();
-        signupRef.child(uid).setValue(user);
+        uid = phoneno.getText().toString();
+        ref.child(uid).setValue(user);
 
     }
 
@@ -182,35 +292,39 @@ public class SignUp extends AppCompatActivity {
         resend_otp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resendVerificationCode(mob_no, force_token);
+                resendVerificationCode(s, mResendToken);
             }
         });
 
         otp_text = view.findViewById(R.id.et_otp_dig_1);
         builder.setCancelable(false);
-        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                if (otp_text.getText().toString().equals("")) {
-                    Toast.makeText(SignUp.this, "Invalid otp", Toast.LENGTH_SHORT).show();
+                String code=otp_text.getText().toString();
+                if (code.equals("")||code.length()!=6) {
+                    Toast.makeText(SignUp.this, "Cannot leave empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                else {
 
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verify_Id, otp_text.getText().toString().trim());
-                signInWithPhoneAuthCredential(credential);
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
+                    signInWithPhoneAuthCredential(credential);
+                }
 
             }
         });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
-    }
 
+    }
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        fauth.signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -218,19 +332,13 @@ public class SignUp extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-
                             FirebaseUser user = task.getResult().getUser();
-
                             saveDataInFirebase(user.getUid());
 
-                            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-
-
-                            }
-                            finish();
                             Intent inten = new Intent(SignUp.this, MainActivity.class);
-                            inten.putExtra("mmobile", t_mobile.getText().toString().trim());
+                            inten.putExtra("mmobile", phoneno.getText().toString());
                             inten.putExtra("choice", variable);
+                            finish();
                             startActivity(inten);
                             // ...
                         } else {
@@ -240,14 +348,26 @@ public class SignUp extends AppCompatActivity {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+
+                                Toast.makeText(SignUp.this,"Invalid credentials",Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     }
                 });
     }
+    private boolean validatePhoneNumber() {
+        String phoneNumber = phoneno.getText().toString();
+        if (TextUtils.isEmpty(phoneNumber)||phoneNumber.length()!=10) {
+            // phone.setError("Invalid phone number.");
+            Toast.makeText(SignUp.this,"Invalid Number",Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
-    private void registerMobile() {
-        mob_no = "+91" + t_mobile.getText().toString();
+        return true;
+    }
+   /* private void registerMobile() {
+        mob_no = "+91" + phoneno.getText().toString();
         name = t_name.getText().toString();
         age = t_age.getText().toString();
 
@@ -271,7 +391,7 @@ public class SignUp extends AppCompatActivity {
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
     }
-
+*/
     public class CustomOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         String firstItem = String.valueOf(spinner.getSelectedItem());
