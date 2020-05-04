@@ -338,7 +338,7 @@ public class HelpDesk extends Fragment implements MultipleChoiceDialogFragment.o
         }
 
         // Toast.makeText(getActivity(), "Doneee", Toast.LENGTH_SHORT).show();
-        User user = new User(choice_data,address_input);
+        User user = new User(choice_data,address_input,address_lat,address_long);
         reff.child("z_Helper_type").setValue(user);
 
 
